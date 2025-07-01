@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import vn.hoidanit.todo.entity.User;
 import vn.hoidanit.todo.repository.UserRepository;
+import vn.hoidanit.todo.service.impl.UserServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Test
     public void createUser_shouldReturnUser_WhenEmailIsValid() {
@@ -36,7 +37,7 @@ public class UserServiceTest {
         when(this.userRepository.save(any())).thenReturn(outputUser);
 
         //act: hành động
-        User result = this.userService.createUser(inputUser);
+        User result = this.userServiceImpl.createUser(inputUser);
 
         //assert: so sánh
         assertEquals(1L, result.getId());
@@ -52,7 +53,7 @@ public class UserServiceTest {
 
 
         //act: hành động
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> this.userService.createUser(inputUser));
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> this.userServiceImpl.createUser(inputUser));
 
         //assert: so sánh
         assertEquals("Email already exists", ex.getMessage());
@@ -68,7 +69,7 @@ public class UserServiceTest {
         when(this.userRepository.findAll()).thenReturn(outputUsers);
 
         //act: hành động (kết quả thực)
-        List<User> result = this.userService.getAllUsers();
+        List<User> result = this.userServiceImpl.getAllUsers();
 
         //assert: so sánh
         assertEquals(2, result.size());
@@ -84,7 +85,7 @@ public class UserServiceTest {
         when(this.userRepository.findById(inputId)).thenReturn(userOptionalOutput);
 
         //act: hành động
-        Optional<User> result = this.userService.getUserById(inputId);
+        Optional<User> result = this.userServiceImpl.getUserById(inputId);
 
         //assert: so sánh
         assertEquals(true, result.isPresent());
@@ -96,7 +97,7 @@ public class UserServiceTest {
         Long inputId = 1L;
         when(this.userRepository.existsById(inputId)).thenReturn(true);
         //act: hành động
-        this.userService.deleteUser(inputId);
+        this.userServiceImpl.deleteUser(inputId);
 
         //assert: so sánh
         verify(this.userRepository, times(1)).deleteById(inputId);
@@ -108,7 +109,7 @@ public class UserServiceTest {
         Long inputId = 1L;
         when(this.userRepository.existsById(inputId)).thenReturn(false);
         //act: hành động
-        Exception ex = assertThrows(NoSuchElementException.class, () -> this.userService.deleteUser(inputId));
+        Exception ex = assertThrows(NoSuchElementException.class, () -> this.userServiceImpl.deleteUser(inputId));
 
         //assert: so sánh
         assertEquals("User not found", ex.getMessage());
@@ -124,7 +125,7 @@ public class UserServiceTest {
         when(this.userRepository.findById(inputId)).thenReturn(Optional.of(inputUser));
         when(this.userRepository.save(any())).thenReturn(outputUser);
         //act: hành động
-        User result = this.userService.updateUser(inputId, inputUser);
+        User result = this.userServiceImpl.updateUser(inputId, inputUser);
 
         //assert: so sánh
         assertEquals("new name", result.getName());
